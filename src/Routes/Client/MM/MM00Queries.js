@@ -10,6 +10,23 @@ export const GET_NOTICE = gql`
   }
 `;
 
+export const GET_NOTICEBOARD_DETAIL = gql`
+  query getAllNotices {
+    getAllNotices {
+      id
+      title
+      description
+      createdAt
+    }
+  }
+`;
+
+export const GET_NOTICEBOARD_TOTALPAGE = gql`
+  query getNoticeBoardTotalPage($searchValue: String!, $limit: Int!) {
+    getNoticeBoardTotalPage(searchValue: $searchValue, limit: $limit)
+  }
+`;
+
 export const CREATE_NOTICE = gql`
   mutation createNotice(
     $userId: String!
@@ -37,6 +54,20 @@ export const UPDATE_NOTICE = gql`
       id
       description
     }
+  }
+`;
+
+export const GET_NOTICE_TOTAL_PAGE = gql`
+  query getNoticeTotalPage(
+    $limit: Int!
+    $searchValue: String!
+    $currentFloor: String!
+  ) {
+    getNoticeTotalPage(
+      limit: $limit
+      searchValue: $searchValue
+      currentFloor: $currentFloor
+    )
   }
 `;
 

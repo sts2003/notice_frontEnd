@@ -10,11 +10,15 @@ import {
   TableHeadLIST,
   RsWrapper,
   CommonButton,
+  PagenationWrapper,
+  PagenationBtn,
+  Pagenation,
 } from "../../../Components/CommonComponents";
 import withSplitting from "../../../Lib/withSplittings";
 import styled from "styled-components";
 import { withResizeDetector } from "react-resize-detector";
 import CircularIndeterminate from "../../../Components/loading/CircularIndeterminate";
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 
 // const SearchInput = styled(TextInput)`
 //   position: relative;
@@ -62,7 +66,17 @@ const SearchWrapper2 = styled(Wrapper)`
   }
 `;
 
-const MM00Presenter = ({ noticeDatum }) => {
+const MM00Presenter = ({
+  noticeDatum,
+  pages,
+  currentPage,
+  limit,
+  setCurrentPage,
+  prevAndNextPageChangeNoticeHandler,
+  changePageHandler,
+  moveLinkHandler,
+  link,
+}) => {
   return (
     <WholeWrapper margin={`150px 0 0 0`}>
       <RsWrapper>
@@ -107,8 +121,45 @@ const MM00Presenter = ({ noticeDatum }) => {
         ) : (
           <CircularIndeterminate />
         )}
+        <Wrapper margin={`30px 0px`} ju={`flex-end`} dr={`row`}>
+          {pages && pages.length > 0 && (
+            <PagenationWrapper width={`auto`}>
+              <PagenationBtn
+                onClick={() =>
+                  noticeDatum &&
+                  prevAndNextPageChangeNoticeHandler(currentPage - 1)
+                }
+              >
+                <IoIosArrowBack />
+              </PagenationBtn>
+              {pages.map((data) => {
+                return (
+                  <Pagenation
+                    className={data === currentPage ? `active` : ``}
+                    key={data}
+                    onClick={() => changePageHandler(data)}
+                  >
+                    {data + 1}
+                  </Pagenation>
+                );
+              })}
+              <PagenationBtn
+                onClick={() =>
+                  noticeDatum &&
+                  prevAndNextPageChangeNoticeHandler(currentPage + 1)
+                }
+              >
+                <IoIosArrowForward />
+              </PagenationBtn>
+            </PagenationWrapper>
+          )}
+        </Wrapper>
 
-        <CommonButton value="글쓰기" />
+        <Wrapper margin={`30px 0px`} ju={`flex-end`} dr={`row`}>
+          <CommonButton width={`80px`} margin={`0px 10px 0px 0px`}>
+            글 작성
+          </CommonButton>
+        </Wrapper>
       </RsWrapper>
     </WholeWrapper>
   );
