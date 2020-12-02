@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { GET_NOTICEBOARD_DETAIL } from "../../MM/MM00Queries";
+import { GET_NOTICEBOARD_DETAIL } from "../MM00Queries";
 import styled from "styled-components";
 import { withResizeDetector } from "react-resize-detector";
 import { useQuery } from "react-apollo-hooks";
@@ -79,8 +79,8 @@ export default withResizeDetector(({ match, history, width }) => {
 
   ///////////// - USE EFFECT- ///////////////
   useEffect(() => {
-    if (noticeData && noticeData.getNoticeBoardDetail) {
-      let tempData = noticeData.getNoticeBoardDetail;
+    if (noticeData && noticeData.getNoticeDetail) {
+      let tempData = noticeData.getNoticeDetail;
 
       const desc = document.getElementById("notice_description-js");
 
@@ -94,13 +94,15 @@ export default withResizeDetector(({ match, history, width }) => {
   useEffect(() => {
     noticeRefetch();
   }, []);
+  console.log(currentData);
 
   useTitle(``);
+  // console.log(currentData);
   return (
     <WholeWrapper margin={`150px 0 0 0`}>
       <RsWrapper padding={`100px 0`}>
         <Board_D_title>
-          {currentData ? currentData.title : <CircularIndeterminate />}
+          {currentData ? currentData[1].title : <CircularIndeterminate />}
         </Board_D_title>
         <Board_D dr={`row`}>
           <Board_D_List
@@ -110,11 +112,7 @@ export default withResizeDetector(({ match, history, width }) => {
             작성자
           </Board_D_List>
           <Board_D_List width={width < 700 ? `100%` : `calc((100% - 150px))`}>
-            {currentData ? (
-              currentData.userId.slice(0, 10)
-            ) : (
-              <CircularIndeterminate />
-            )}
+            {currentData ? currentData[1].id : <CircularIndeterminate />}
           </Board_D_List>
           <Board_D_List
             width={width < 700 ? `100%` : `250px`}
@@ -123,11 +121,7 @@ export default withResizeDetector(({ match, history, width }) => {
             작성일
           </Board_D_List>
           <Board_D_List width={width < 700 ? `100%` : `calc((100% - 150px))`}>
-            {currentData ? (
-              currentData.createdAt.slice(0, 10)
-            ) : (
-              <CircularIndeterminate />
-            )}
+            {currentData ? currentData[1].createdAt : <CircularIndeterminate />}
           </Board_D_List>
         </Board_D>
 

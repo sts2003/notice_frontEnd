@@ -3,16 +3,6 @@ import { gql } from "apollo-boost";
 export const GET_NOTICE = gql`
   query getAllNotices {
     getAllNotices {
-      title
-      description
-      createdAt
-    }
-  }
-`;
-
-export const GET_NOTICEBOARD_DETAIL = gql`
-  query getAllNotices {
-    getAllNotices {
       id
       title
       description
@@ -21,11 +11,22 @@ export const GET_NOTICEBOARD_DETAIL = gql`
   }
 `;
 
-export const GET_NOTICEBOARD_TOTALPAGE = gql`
-  query getNoticeBoardTotalPage($searchValue: String!, $limit: Int!) {
-    getNoticeBoardTotalPage(searchValue: $searchValue, limit: $limit)
+export const GET_NOTICEBOARD_DETAIL = gql`
+  query getNoticeDetail {
+    getNoticeDetail {
+      id
+      title
+      description
+      createdAt
+    }
   }
 `;
+
+// export const GET_NOTICEBOARD_TOTALPAGE = gql`
+//   query getNoticeBoardTotalPage($searchValue: String!, $limit: Int!) {
+//     getNoticeBoardTotalPage(searchValue: $searchValue, limit: $limit)
+//   }
+// `;
 
 export const CREATE_NOTICE = gql`
   mutation createNotice(

@@ -75,6 +75,7 @@ const MM00Presenter = ({
   prevAndNextPageChangeNoticeHandler,
   changePageHandler,
   moveLinkHandler,
+  totalCnt,
   link,
 }) => {
   return (
@@ -102,18 +103,23 @@ const MM00Presenter = ({
           ) : (
             noticeDatum.map((data, idx) => {
               return (
-                <TableBody key={idx} onClick={() => moveLinkHandler(idx)}>
+                <TableBody key={idx} onClick={() => moveLinkHandler(data.id)}>
                   {/* {data.description} */}
-
-                  <TableBodyLIST width={`100px`}>{data.title}</TableBodyLIST>
+                  <TableBodyLIST width={`100px`}>
+                    {totalCnt - (currentPage * limit + idx) + ""}
+                  </TableBodyLIST>
+                  <TableBodyLIST
+                    width={`calc(100% - 100px - 160px - 100px)`}
+                    ju={`flex-start`}
+                  >
+                    {data.title}
+                  </TableBodyLIST>
+                  <TableBodyLIST fontWeight={`800`} ju={`flex-end`}>
+                    {data.id}
+                  </TableBodyLIST>
                   <TableBodyLIST width={`100px`}>
                     {data.createdAt.slice(0, 13)}
                   </TableBodyLIST>
-                  <TableBodyLIST
-                    fontWeight={`800`}
-                    width={`calc(100% - 100px - 160px - 100px)`}
-                    ju={`flex-start`}
-                  ></TableBodyLIST>
                 </TableBody>
               );
             })
@@ -121,6 +127,7 @@ const MM00Presenter = ({
         ) : (
           <CircularIndeterminate />
         )}
+
         <Wrapper margin={`30px 0px`} ju={`flex-end`} dr={`row`}>
           {pages && pages.length > 0 && (
             <PagenationWrapper width={`auto`}>

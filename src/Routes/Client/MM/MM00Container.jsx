@@ -9,6 +9,7 @@ import {
   UPDATE_NOTICE,
   GET_NOTICE_TOTAL_PAGE,
 } from "./MM00Queries";
+import { toast } from "react-toastify";
 import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
 
@@ -16,7 +17,7 @@ const MM00Container = ({ history, limit, searchValue }) => {
   ////////////// - USE STATE- ///////////////
   const [pages, setPages] = useState(null);
   const [currentPage, setCurrentPage] = useState(0);
-
+  // const [limit, setLimit] = useState(10);
   ////////////// - USE QUERY- ///////////////
   const {
     data: noticeDatum,
@@ -28,20 +29,22 @@ const MM00Container = ({ history, limit, searchValue }) => {
     GET_NOTICE_TOTAL_PAGE,
     {
       variables: {
-        limit,
         searchValue,
+        limit,
       },
     }
   );
   ////////////// - USE EFFECT- //////////////
+
   useEffect(() => {
+    // noticeDatumRefetch();
+    // noticePageRefetch();
     if (noticePageData && !pages) {
       const temp = [];
 
       for (let i = 0; i < noticePageData.getNoticeBoardTotalPage; i++) {
         temp.push(i);
       }
-
       setPages(temp);
     }
   }, [noticePageData]);
@@ -58,7 +61,7 @@ const MM00Container = ({ history, limit, searchValue }) => {
   };
 
   const moveLinkHandler = (idx) => {
-    history.push(`/notice-detail/`);
+    history.push(`/notice-detail/${idx}`);
   };
 
   const prevAndNextPageChangeNoticeHandler = (page) => {

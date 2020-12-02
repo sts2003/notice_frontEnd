@@ -13,7 +13,7 @@ const AppRouter = ({ width }) => {
   return (
     <Router>
       <Route exact path="/" component={MM00} />
-      <Route exact path="/notice-detail/" component={BOARD_D} />
+      <Route exact path="/notice-detail/:key" component={BOARD_D} />
     </Router>
   );
 };
