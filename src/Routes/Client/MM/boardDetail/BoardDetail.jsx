@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { GET_NOTICEBOARD_DETAIL } from "../MM00Queries";
+import {
+  GET_NOTICEBOARD_DETAIL,
+  GET_NOTICEBOARD_BEFORE_ID,
+  GET_NOTICEBOARD_NEXT_ID,
+} from "../MM00Queries";
 import styled from "styled-components";
 import { withResizeDetector } from "react-resize-detector";
 import { useQuery } from "react-apollo-hooks";
@@ -71,10 +75,50 @@ export default withResizeDetector(({ match, history, width }) => {
     },
   });
 
+  const {
+    data: noticeNextData,
+    loading: noticeNextLoading,
+    refetch: noticeNextRefetch,
+  } = useQuery(GET_NOTICEBOARD_NEXT_ID, {
+    variables: {
+      id: match.params.key,
+    },
+  });
+
+  const {
+    data: noticeBeforeData,
+    loading: noticeBeforeLoading,
+    refetch: noticeBeforeRefetch,
+  } = useQuery(GET_NOTICEBOARD_BEFORE_ID, {
+    variables: {
+      id: match.params.key,
+    },
+  });
+
   ///////////// - EVENT HANDLER- ////////////
 
   const _moveListBoard = () => {
     history.push(`/`);
+  };
+
+  const _moveBeforeBoard = () => {
+    console.log(noticeBeforeData.getNoticeBoardBeforeId);
+    if (noticeBeforeData.getNoticeBoardBeforeId === null) {
+      toast.error("첫번째 글 입니다.");
+
+      return null;
+    }
+    history.push(noticeBeforeData.getNoticeBoardBeforeId.id);
+  };
+
+  const _moveNextBoard = () => {
+    if (noticeNextData.getNoticeBoardNextId === null) {
+      toast.error("마지막 글 입니다.");
+
+      return null;
+    }
+
+    history.push(noticeNextData.getNoticeBoardNextId.id);
   };
 
   ///////////// - USE EFFECT- ///////////////
@@ -93,16 +137,17 @@ export default withResizeDetector(({ match, history, width }) => {
 
   useEffect(() => {
     noticeRefetch();
+    noticeNextRefetch();
+    noticeBeforeRefetch();
   }, []);
-  console.log(currentData);
 
   useTitle(``);
-  // console.log(currentData);
+
   return (
     <WholeWrapper margin={`150px 0 0 0`}>
       <RsWrapper padding={`100px 0`}>
         <Board_D_title>
-          {currentData ? currentData[1].title : <CircularIndeterminate />}
+          {currentData ? currentData.title : <CircularIndeterminate />}
         </Board_D_title>
         <Board_D dr={`row`}>
           <Board_D_List
@@ -112,7 +157,7 @@ export default withResizeDetector(({ match, history, width }) => {
             작성자
           </Board_D_List>
           <Board_D_List width={width < 700 ? `100%` : `calc((100% - 150px))`}>
-            {currentData ? currentData[1].id : <CircularIndeterminate />}
+            {currentData ? currentData.id : <CircularIndeterminate />}
           </Board_D_List>
           <Board_D_List
             width={width < 700 ? `100%` : `250px`}
@@ -121,7 +166,7 @@ export default withResizeDetector(({ match, history, width }) => {
             작성일
           </Board_D_List>
           <Board_D_List width={width < 700 ? `100%` : `calc((100% - 150px))`}>
-            {currentData ? currentData[1].createdAt : <CircularIndeterminate />}
+            {currentData ? currentData.createdAt : <CircularIndeterminate />}
           </Board_D_List>
         </Board_D>
 
@@ -138,17 +183,22 @@ export default withResizeDetector(({ match, history, width }) => {
             margin={`0px 10px 0px 0px`}
             onClick={() => _moveListBoard()}
           >
-            돌아가기
-          </CommonButton>
-          <CommonButton width={`80px`} margin={`0px 10px 0px 0px`}>
             목록
           </CommonButton>
 
-          <CommonButton width={`80px`} margin={`0px 10px 0px 0px`}>
+          <CommonButton
+            width={`80px`}
+            margin={`0px 10px 0px 0px`}
+            onClick={() => _moveBeforeBoard()}
+          >
             이전
           </CommonButton>
 
-          <CommonButton width={`80px`} margin={`0px 10px 0px 0px`}>
+          <CommonButton
+            width={`80px`}
+            margin={`0px 10px 0px 0px`}
+            onClick={() => _moveNextBoard()}
+          >
             다음
           </CommonButton>
         </Wrapper>

@@ -4,6 +4,7 @@ import {
   TableBody,
   TableBodyLIST,
   TableWrapper,
+  TextInput,
   Wrapper,
   WholeWrapper,
   TableHead,
@@ -14,11 +15,16 @@ import {
   PagenationBtn,
   Pagenation,
 } from "../../../Components/CommonComponents";
+import Button from "@material-ui/core/Button";
 import withSplitting from "../../../Lib/withSplittings";
 import styled from "styled-components";
 import { withResizeDetector } from "react-resize-detector";
 import CircularIndeterminate from "../../../Components/loading/CircularIndeterminate";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import Dialog from "@material-ui/core/Dialog";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogActions from "@material-ui/core/DialogActions";
 
 // const SearchInput = styled(TextInput)`
 //   position: relative;
@@ -77,6 +83,12 @@ const MM00Presenter = ({
   moveLinkHandler,
   totalCnt,
   link,
+  _isDialogOpenToggle,
+  isDialogOpen,
+  _valueChangeHandler,
+  valueTitle,
+  valueDesc,
+  addNotice,
 }) => {
   return (
     <WholeWrapper margin={`150px 0 0 0`}>
@@ -163,10 +175,57 @@ const MM00Presenter = ({
         </Wrapper>
 
         <Wrapper margin={`30px 0px`} ju={`flex-end`} dr={`row`}>
-          <CommonButton width={`80px`} margin={`0px 10px 0px 0px`}>
+          <CommonButton
+            width={`80px`}
+            margin={`0px 10px 0px 0px`}
+            onClick={() => _isDialogOpenToggle()}
+          >
             글 작성
           </CommonButton>
         </Wrapper>
+
+        <Dialog
+          onClose={_isDialogOpenToggle}
+          aria-labelledby="customized-dialog-title"
+          open={isDialogOpen}
+          fullWidth={true}
+        >
+          <DialogTitle
+            id="customized-dialog-title"
+            onClose={_isDialogOpenToggle}
+            // class="dialog_title"
+          >
+            게시글 추가
+          </DialogTitle>
+          <DialogContent>
+            <Wrapper dr={`row`}>
+              제목
+              <TextInput
+                name="title"
+                value={valueTitle}
+                onChange={_valueChangeHandler}
+              />
+            </Wrapper>
+            <Wrapper dr={`row`}>
+              내용
+              <TextInput
+                name="desc"
+                value={valueDesc}
+                onChange={_valueChangeHandler}
+              />
+            </Wrapper>
+          </DialogContent>
+          <DialogActions>
+            <Button color="primary" onClick={() => addNotice()}>
+              보내기
+            </Button>
+            <Button color="secondary" onClick={() => _isDialogOpenToggle()}>
+              취소
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        {/* Dialog Area */}
       </RsWrapper>
     </WholeWrapper>
   );

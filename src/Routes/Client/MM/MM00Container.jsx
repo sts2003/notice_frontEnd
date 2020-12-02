@@ -13,17 +13,30 @@ import { toast } from "react-toastify";
 import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
 
-const MM00Container = ({ history, limit, searchValue }) => {
+const MM00Container = ({ history }) => {
   ////////////// - USE STATE- ///////////////
   const [pages, setPages] = useState(null);
   const [currentPage, setCurrentPage] = useState(0);
-  // const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState(10);
+  const [searchValue, setSearchValue] = useState("");
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [value, setValue] = useState({
+    title: "",
+    desc: "",
+  });
+
   ////////////// - USE QUERY- ///////////////
   const {
     data: noticeDatum,
     loading: noticeDatumLoading,
     refetch: noticeDatumRefetch,
-  } = useQuery(GET_NOTICE);
+  } = useQuery(GET_NOTICE, {
+    variables: {
+      searchValue,
+      limit,
+      currentPage,
+    },
+  });
 
   const { data: noticePageData, refetch: noticePageRefetch } = useQuery(
     GET_NOTICE_TOTAL_PAGE,
@@ -50,11 +63,49 @@ const MM00Container = ({ history, limit, searchValue }) => {
   }, [noticePageData]);
 
   ///////////// - USE MUTATION- /////////////
-  const [createNotice] = useMutation(CREATE_NOTICE);
+  const [createNotice] = useMutation(CREATE_NOTICE, {
+    variables: {
+      title: value.title,
+      description: value.desc,
+    },
+  });
   // const [deleteNotice] = useMutation(DELETE_NOTICE);
   // const [updateNotice] = useMutation(UPDATE_NOTICE);
 
   ///////////// - EVENT HANDLER- ////////////
+
+  const addNotice = async () => {
+    if (value.title === "") {
+      toast.error("NOTICE TYPE IS MUST!");
+      return;
+    }
+    if (value.desc === "") {
+      toast.error("NOTICE TYPE IS MUST!");
+      return;
+    }
+
+    const { data } = await createNotice();
+    if (data.createNotice) {
+      toast.info("게시글이 추가되었습니다");
+      noticeDatumRefetch();
+      setValue("");
+      _isDialogOpenToggle();
+    } else {
+      toast.error("다시 시도해주세요");
+    }
+  };
+
+  const _isDialogOpenToggle = () => {
+    setIsDialogOpen(!isDialogOpen);
+  };
+
+  const _valueChangeHandler = (event) => {
+    const nextState = { ...value };
+
+    nextState[event.target.name] = event.target.value;
+
+    setValue(nextState);
+  };
 
   const changePageHandler = (page) => {
     setCurrentPage(page);
@@ -156,8 +207,6 @@ const MM00Container = ({ history, limit, searchValue }) => {
   //   }
   // };
 
-  const _createNotice = async () => {};
-
   ////////////// - USE EFFECT- //////////////
   return (
     <MM00Presenter
@@ -172,6 +221,14 @@ const MM00Container = ({ history, limit, searchValue }) => {
       // boardDeleteHandler={boardDeleteHandler}
       changePageHandler={changePageHandler}
       // noticeUpdateHandler={noticeUpdateHandler}
+      _isDialogOpenToggle={_isDialogOpenToggle}
+      isDialogOpen={isDialogOpen}
+      _valueChangeHandler={_valueChangeHandler}
+      valueTitle={value.title}
+      valueDesc={value.desc}
+      addNotice={addNotice}
+      searchValue={searchValue}
+      setSearchValue={setSearchValue}
     />
   );
 };
