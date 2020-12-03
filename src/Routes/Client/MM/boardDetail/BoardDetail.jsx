@@ -4,6 +4,7 @@ import {
   GET_NOTICEBOARD_BEFORE_ID,
   GET_NOTICEBOARD_NEXT_ID,
   DELETE_NOTICE,
+  UPDATE_NOTICE,
 } from "../MM00Queries";
 import styled from "styled-components";
 import { withResizeDetector } from "react-resize-detector";
@@ -14,15 +15,17 @@ import {
   RsWrapper,
   CommonButton,
   Wrapper,
-  TableHeadColumn,
-  TableWrapper,
+  TextInput,
 } from "../../../../Components/CommonComponents";
 import CircularIndeterminate from "../../../../Components/loading/CircularIndeterminate";
 import useTitle from "@4leaf.ysh/use-title";
 import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
-import Theme from "../../../../Styles/Theme";
-import { FiDelete } from "react-icons/fi";
+import Button from "@material-ui/core/Button";
+import Dialog from "@material-ui/core/Dialog";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogActions from "@material-ui/core/DialogActions";
 
 const Board_D_title = styled.h2`
   width: 100%;
@@ -70,6 +73,11 @@ export default withResizeDetector(({ match, history, width }) => {
 
   ////////////// - USE STATE- ///////////////
   const [currentData, setCurrentData] = useState(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [value, setValue] = useState({
+    title: "",
+    desc: "",
+  });
   ///////////// - USE QUERY- ////////////////
 
   const {
@@ -103,16 +111,47 @@ export default withResizeDetector(({ match, history, width }) => {
   });
 
   ///////////// - USE MUTATION - /////////////
+  const [updateNoticeBoard] = useMutation(UPDATE_NOTICE);
   const [deleteNoticeBoard] = useMutation(DELETE_NOTICE);
 
   ///////////// - EVENT HANDLER- ////////////
+
+  const updateNotice = async () => {
+    const { data } = await updateNoticeBoard({
+      variables: {
+        id: noticeData && noticeData.getNoticeDetail.id,
+        title: value.title,
+        description: value.desc,
+      },
+    });
+
+    if (data.updateNotice) {
+      toast.info("게시글이 수정되었습니다");
+      history.push("/");
+      setValue("");
+      _isDialogOpenToggle();
+    } else {
+      toast.error("다시 시도해주세요");
+    }
+  };
+
+  const _isDialogOpenToggle = () => {
+    setIsDialogOpen(!isDialogOpen);
+  };
+
+  const _valueChangeHandler = (event) => {
+    const nextState = { ...value };
+
+    nextState[event.target.name] = event.target.value;
+
+    setValue(nextState);
+  };
 
   const _moveListBoard = () => {
     history.push(`/`);
   };
 
   const _moveBeforeBoard = () => {
-    console.log(noticeBeforeData.getNoticeBoardBeforeId);
     if (noticeBeforeData.getNoticeBoardBeforeId === null) {
       toast.error("첫번째 글 입니다.");
 
@@ -153,13 +192,13 @@ export default withResizeDetector(({ match, history, width }) => {
   const boardDeleteHandlerAfter = async (id) => {
     const { data } = await deleteNoticeBoard({
       variables: {
-        id,
+        id: currentData.id,
       },
     });
-    console.log(data.deleteNoticeBoard);
-    if (data.deleteNoticeBoard) {
+
+    if (data.deleteNotice) {
       toast.info("DELETE NOTICE!");
-      noticeRefetch();
+      history.push("/");
     } else {
       toast.error("잠시 후 다시 시도해주세요.");
     }
@@ -225,7 +264,7 @@ export default withResizeDetector(({ match, history, width }) => {
           <CommonButton
             width={`80px`}
             margin={`0px 10px 0px 0px`}
-            onClick={() => _moveListBoard()}
+            onClick={() => _isDialogOpenToggle()}
           >
             수정
           </CommonButton>
@@ -233,7 +272,7 @@ export default withResizeDetector(({ match, history, width }) => {
           <CommonButton
             width={`80px`}
             margin={`0px 10px 0px 0px`}
-            onClick={() => boardDeleteHandler(data.id)}
+            onClick={() => boardDeleteHandler()}
           >
             삭제
           </CommonButton>
@@ -262,6 +301,50 @@ export default withResizeDetector(({ match, history, width }) => {
             다음
           </CommonButton>
         </Wrapper>
+
+        {/* Dialog Area */}
+        <Dialog
+          onClose={_isDialogOpenToggle}
+          aria-labelledby="customized-dialog-title"
+          open={isDialogOpen}
+          fullWidth={true}
+        >
+          <DialogTitle
+            id="customized-dialog-title"
+            onClose={_isDialogOpenToggle}
+            // class="dialog_title"
+          >
+            게시글 수정
+          </DialogTitle>
+          <DialogContent>
+            <Wrapper dr={`row`}>
+              제목
+              <TextInput
+                name="title"
+                value={value.title}
+                onChange={_valueChangeHandler}
+              />
+            </Wrapper>
+            <Wrapper dr={`row`}>
+              내용
+              <TextInput
+                name="desc"
+                value={value.desc}
+                onChange={_valueChangeHandler}
+              />
+            </Wrapper>
+          </DialogContent>
+          <DialogActions>
+            <Button color="primary" onClick={updateNotice}>
+              수정
+            </Button>
+            <Button color="secondary" onClick={_isDialogOpenToggle}>
+              취소
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        {/* Dialog Area */}
       </RsWrapper>
     </WholeWrapper>
   );

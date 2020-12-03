@@ -62,6 +62,9 @@ const MM00Container = ({ history }) => {
     }
   }, [noticePageData]);
 
+  useEffect(() => {
+    noticeDatumRefetch();
+  }, []);
   ///////////// - USE MUTATION- /////////////
   const [createNotice] = useMutation(CREATE_NOTICE, {
     variables: {
@@ -208,6 +211,7 @@ const MM00Container = ({ history }) => {
   // };
 
   ////////////// - USE EFFECT- //////////////
+
   return (
     <MM00Presenter
       noticeDatum={noticeDatum && noticeDatum.getAllNotices}
