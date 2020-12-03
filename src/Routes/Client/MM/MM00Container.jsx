@@ -14,12 +14,14 @@ import {
 import { toast } from "react-toastify";
 import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
+import useInput from "../../../Hooks/useInput";
 
 const MM00Container = ({ history }) => {
   ////////////// - USE STATE- ///////////////
   const [pages, setPages] = useState(null);
   const [currentPage, setCurrentPage] = useState(0);
   const [limit, setLimit] = useState(10);
+  const inputSearch = useInput("");
   const [searchValue, setSearchValue] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [value, setValue] = useState({
@@ -70,6 +72,7 @@ const MM00Container = ({ history }) => {
       limit,
     },
   });
+  console.log(noticeDatum);
 
   ////////////// - USE EFFECT- //////////////
 
@@ -103,6 +106,17 @@ const MM00Container = ({ history }) => {
 
   ///////////// - EVENT HANDLER- ////////////
 
+  const changeFloorHandler = (floor) => {
+    setCurrentFloor(floor);
+    setDetailKey(null);
+    inputSearch.setValue("");
+    setSearchValue("");
+  };
+
+  const changeSearchValueHandler = () => {
+    setPages(null);
+    setSearchValue(inputSearch.value);
+  };
   const addNotice = async () => {
     if (value.title === "") {
       toast.error("NOTICE TYPE IS MUST!");
@@ -252,11 +266,14 @@ const MM00Container = ({ history }) => {
       }
       prevAndNextPageChangeNoticeHandler={prevAndNextPageChangeNoticeHandler}
       createNotice={createNotice}
+      inputSearchValue={inputSearch}
       moveLinkHandler={moveLinkHandler}
       // boardDeleteHandler={boardDeleteHandler}
       changePageHandler={changePageHandler}
       // noticeUpdateHandler={noticeUpdateHandler}
       _isDialogOpenToggle={_isDialogOpenToggle}
+      changeFloorHandler={changeFloorHandler}
+      changeSearchValueHandler={changeSearchValueHandler}
       isDialogOpen={isDialogOpen}
       _valueChangeHandler={_valueChangeHandler}
       valueTitle={value.title}

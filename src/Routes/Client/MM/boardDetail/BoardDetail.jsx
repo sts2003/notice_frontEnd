@@ -136,6 +136,9 @@ export default withResizeDetector(({ match, history, width }) => {
   };
 
   const _isDialogOpenToggle = () => {
+    if (!isDialogOpen) {
+      setValue({ title: currentData.title, desc: currentData.description });
+    }
     setIsDialogOpen(!isDialogOpen);
   };
 
