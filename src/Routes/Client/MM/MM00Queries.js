@@ -59,6 +59,17 @@ export const GET_NOTICE_TOTAL_PAGE = gql`
     getNoticeBoardTotalPage(limit: $limit, searchValue: $searchValue)
   }
 `;
+export const GET_NOTICEBOARD_TOTALPAGE = gql`
+  query getNoticeBoardTotalPage($searchValue: String!, $limit: Int!) {
+    getNoticeBoardTotalPage(searchValue: $searchValue, limit: $limit)
+  }
+`;
+
+export const GET_NOTICEBOARD_TOTALPAGE_ONLY_CNT = gql`
+  query getNoticeBoardTotalPageOnlyCnt($searchValue: String!, $limit: Int!) {
+    getNoticeBoardTotalPageOnlyCnt(searchValue: $searchValue, limit: $limit)
+  }
+`;
 
 export const GET_NOTICEBOARD_NEXT_ID = gql`
   query getNoticeBoardNextId($id: String!) {

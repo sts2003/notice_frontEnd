@@ -204,7 +204,7 @@ const MM00Presenter = ({
                 name="title"
                 value={valueTitle}
                 onChange={_valueChangeHandler}
-              />
+              ></TextInput>
             </Wrapper>
             <Wrapper dr={`row`}>
               내용
@@ -212,7 +212,7 @@ const MM00Presenter = ({
                 name="desc"
                 value={valueDesc}
                 onChange={_valueChangeHandler}
-              />
+              ></TextInput>
             </Wrapper>
           </DialogContent>
           <DialogActions>

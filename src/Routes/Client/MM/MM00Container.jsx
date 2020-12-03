@@ -8,6 +8,8 @@ import {
   DELETE_NOTICE,
   UPDATE_NOTICE,
   GET_NOTICE_TOTAL_PAGE,
+  GET_NOTICEBOARD_TOTALPAGE_ONLY_CNT,
+  GET_NOTICEBOARD_TOTALPAGE,
 } from "./MM00Queries";
 import { toast } from "react-toastify";
 import { confirmAlert } from "react-confirm-alert";
@@ -47,6 +49,28 @@ const MM00Container = ({ history }) => {
       },
     }
   );
+  const {
+    data: totalPageData,
+    loading: totalPageLoading,
+    refetch: totalPageRefetch,
+  } = useQuery(GET_NOTICEBOARD_TOTALPAGE, {
+    variables: {
+      searchValue,
+      limit,
+    },
+  });
+
+  const {
+    data: totalPageOnlyCntData,
+    loading: totalPageOnlyCntLoading,
+    refetch: totalPageOnlyCntRefetch,
+  } = useQuery(GET_NOTICEBOARD_TOTALPAGE_ONLY_CNT, {
+    variables: {
+      searchValue,
+      limit,
+    },
+  });
+
   ////////////// - USE EFFECT- //////////////
 
   useEffect(() => {
@@ -64,6 +88,8 @@ const MM00Container = ({ history }) => {
 
   useEffect(() => {
     noticeDatumRefetch();
+    totalPageRefetch();
+    totalPageOnlyCntRefetch();
   }, []);
   ///////////// - USE MUTATION- /////////////
   const [createNotice] = useMutation(CREATE_NOTICE, {
@@ -219,6 +245,11 @@ const MM00Container = ({ history }) => {
       pages={pages}
       limit={limit}
       setCurrentPage={setCurrentPage}
+      totalPage={totalPageData && totalPageData.getNoticeBoardTotalPage}
+      totalCnt={
+        totalPageOnlyCntData &&
+        totalPageOnlyCntData.getNoticeBoardTotalPageOnlyCnt
+      }
       prevAndNextPageChangeNoticeHandler={prevAndNextPageChangeNoticeHandler}
       createNotice={createNotice}
       moveLinkHandler={moveLinkHandler}
