@@ -70,7 +70,7 @@ const MM00Container = ({ history }) => {
     },
   });
   // const [deleteNotice] = useMutation(DELETE_NOTICE);
-  // const [updateNotice] = useMutation(UPDATE_NOTICE);
+  const [deleteNotice] = useMutation(DELETE_NOTICE);
 
   ///////////// - EVENT HANDLER- ////////////
 
@@ -143,39 +143,39 @@ const MM00Container = ({ history }) => {
   //   setCurrentPage(page);
   // };
 
-  // const boardDeleteHandler = (id) => {
-  //   confirmAlert({
-  //     title: "DELETE NOTICE",
-  //     message: "선택하신 공지사항을 삭제하시겠습니까?",
-  //     buttons: [
-  //       {
-  //         label: "취소",
-  //         onClick: () => {
-  //           return false;
-  //         },
-  //       },
-  //       {
-  //         label: "확인",
-  //         onClick: () => boardDeleteHandlerAfter(id),
-  //       },
-  //     ],
-  //   });
-  // };
+  const boardDeleteHandler = (id) => {
+    confirmAlert({
+      title: "DELETE NOTICE",
+      message: "선택하신 공지사항을 삭제하시겠습니까?",
+      buttons: [
+        {
+          label: "취소",
+          onClick: () => {
+            return false;
+          },
+        },
+        {
+          label: "확인",
+          onClick: () => boardDeleteHandlerAfter(id),
+        },
+      ],
+    });
+  };
 
-  // const boardDeleteHandlerAfter = async (id) => {
-  //   const { data } = await deleteNotice({
-  //     variables: {
-  //       id,
-  //     },
-  //   });
+  const boardDeleteHandlerAfter = async (id) => {
+    const { data } = await deleteNotice({
+      variables: {
+        id,
+      },
+    });
 
-  //   if (data.deleteNotice) {
-  //     toast.info("DELETE NOTICE!");
-  //     noticeRefetch();
-  //   } else {
-  //     toast.error("잠시 후 다시 시도해주세요.");
-  //   }
-  // };
+    if (data.deleteNotice) {
+      toast.info("DELETE NOTICE!");
+      noticeRefetch();
+    } else {
+      toast.error("잠시 후 다시 시도해주세요.");
+    }
+  };
 
   // const dialogToggle = (id = "", title = "", description = "") => {
   //   setId(id);
@@ -229,6 +229,7 @@ const MM00Container = ({ history }) => {
       addNotice={addNotice}
       searchValue={searchValue}
       setSearchValue={setSearchValue}
+      boardDeleteHandler={boardDeleteHandler}
     />
   );
 };

@@ -43,10 +43,8 @@ export const CREATE_NOTICE = gql`
 `;
 
 export const DELETE_NOTICE = gql`
-  mutation deleteNotice($id: String!) {
-    deleteNotice(id: $id) {
-      id
-    }
+  mutation deleteNoticeBoard($id: String!) {
+    deleteNoticeBoard(id: $id)
   }
 `;
 

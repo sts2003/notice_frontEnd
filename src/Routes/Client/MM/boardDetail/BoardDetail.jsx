@@ -3,19 +3,26 @@ import {
   GET_NOTICEBOARD_DETAIL,
   GET_NOTICEBOARD_BEFORE_ID,
   GET_NOTICEBOARD_NEXT_ID,
+  DELETE_NOTICE,
 } from "../MM00Queries";
 import styled from "styled-components";
 import { withResizeDetector } from "react-resize-detector";
-import { useQuery } from "react-apollo-hooks";
+import { useQuery, useMutation } from "react-apollo-hooks";
 import { toast } from "react-toastify";
 import {
   WholeWrapper,
   RsWrapper,
   CommonButton,
   Wrapper,
+  TableHeadColumn,
+  TableWrapper,
 } from "../../../../Components/CommonComponents";
 import CircularIndeterminate from "../../../../Components/loading/CircularIndeterminate";
 import useTitle from "@4leaf.ysh/use-title";
+import { confirmAlert } from "react-confirm-alert";
+import "react-confirm-alert/src/react-confirm-alert.css";
+import Theme from "../../../../Styles/Theme";
+import { FiDelete } from "react-icons/fi";
 
 const Board_D_title = styled.h2`
   width: 100%;
@@ -95,6 +102,9 @@ export default withResizeDetector(({ match, history, width }) => {
     },
   });
 
+  ///////////// - USE MUTATION - /////////////
+  const [deleteNoticeBoard] = useMutation(DELETE_NOTICE);
+
   ///////////// - EVENT HANDLER- ////////////
 
   const _moveListBoard = () => {
@@ -119,6 +129,40 @@ export default withResizeDetector(({ match, history, width }) => {
     }
 
     history.push(noticeNextData.getNoticeBoardNextId.id);
+  };
+
+  const boardDeleteHandler = (id) => {
+    confirmAlert({
+      title: "DELETE NOTICE",
+      message: "선택하신 공지사항을 삭제하시겠습니까?",
+      buttons: [
+        {
+          label: "취소",
+          onClick: () => {
+            return false;
+          },
+        },
+        {
+          label: "확인",
+          onClick: () => boardDeleteHandlerAfter(id),
+        },
+      ],
+    });
+  };
+
+  const boardDeleteHandlerAfter = async (id) => {
+    const { data } = await deleteNoticeBoard({
+      variables: {
+        id,
+      },
+    });
+    console.log(data.deleteNoticeBoard);
+    if (data.deleteNoticeBoard) {
+      toast.info("DELETE NOTICE!");
+      noticeRefetch();
+    } else {
+      toast.error("잠시 후 다시 시도해주세요.");
+    }
   };
 
   ///////////// - USE EFFECT- ///////////////
@@ -178,6 +222,22 @@ export default withResizeDetector(({ match, history, width }) => {
         </Board_D_Desc>
 
         <Wrapper margin={`30px 0px`} ju={`flex-end`} dr={`row`}>
+          <CommonButton
+            width={`80px`}
+            margin={`0px 10px 0px 0px`}
+            onClick={() => _moveListBoard()}
+          >
+            수정
+          </CommonButton>
+
+          <CommonButton
+            width={`80px`}
+            margin={`0px 10px 0px 0px`}
+            onClick={() => boardDeleteHandler(data.id)}
+          >
+            삭제
+          </CommonButton>
+
           <CommonButton
             width={`80px`}
             margin={`0px 10px 0px 0px`}
